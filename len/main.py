@@ -44,14 +44,17 @@ def main():
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Print line lengths.')
+    parser = argparse.ArgumentParser(
+            description='Print line lengths.',
+            usage='%(prog)s [-h] [-s] [FILE...]')
     parser.add_argument(
             '-s',
             action='store_true',
             help='sort lines by increasing length')
     parser.add_argument(
             'files',
-            help='file whose lines will be parsed; defaults to stdin',
+            help='file(s) to parse instead of stdin',
+            metavar='FILE',
             nargs='*')
     return parser.parse_args()
 

@@ -62,12 +62,21 @@ def chomp_lines(istream):
 def main():
     args = parse_args()
     lines = chomp_files(args.files) if args.files else chomp_lines(stdin)
-    if args.r:
+
+    # Never do a full sort if we only want one line.
+    if args.__dict__['1']:
+        if args.r:
+            lines = (max(lines, default=None, key=len),)
+        elif args.s:
+            lines = (min(lines, default=None, key=len),)
+        else:
+            lines = islice(lines, 1)
+
+    elif args.r:
         lines = sorted(lines, key=len, reverse=True)
     elif args.s:
         lines = sorted(lines, key=len)
-    if args.__dict__['1']:
-        lines = islice(lines, 1)
+
     print_lines(lines)
 
 

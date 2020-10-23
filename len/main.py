@@ -19,31 +19,30 @@
 #   $ len -1s .
 #   0:
 #
-# NOTE
-#
 # The length of a line is the number of codepoints, not bytes or grapheme
 # clusters.  For example, len('á') == 1, but len('á') == 2.
 #
-# TODO
-#
-# - Recognize and exclude binary files
-# - Prefix output with file names
+# TODO: Optionally prefix output with file names
 
 from argparse import ArgumentParser
 from itertools import islice
 from os import walk
 from os.path import isdir, join
-from sys import stdin
+from sys import stderr, stdin
 
 def chomp_dir(dir):
     for d, _, fs in walk(dir):
         yield from chomp_files(join(d, f) for f in fs)
 
 
+# TODO: Inject warning log, or return monads.
 def chomp_file(file):
     with open(file) as istream:
-        for line in chomp_lines(istream):
-            yield line
+        try:
+            for line in chomp_lines(istream):
+                yield line
+        except UnicodeDecodeError:
+            print('warning:', file + ':', 'binary file', file=stderr)
         
 
 def chomp_files(files):

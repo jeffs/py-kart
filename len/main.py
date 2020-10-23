@@ -6,16 +6,18 @@
 #
 # Find the longest line in any of several files:
 #
-#   $ len -s *.py |tail -1
+#   $ len -1r *.py
 #   78:     Returns a lazy generator of lines without trailing newline characters from
 #
 # Find the longest line in any file under the current directory:
 #
-#   $ len -s . |tail -1
+#   $ len -1r .
 #   169: You just won't believe how vastly hugely mind-bogglingly big it is. I mean, you may think it's a long way down the road to the chemist, but that's just peanuts to space.
 #
-#   $ len -r . |head -1
-#   178: #   169: You just won't believe how vastly hugely mind-bogglingly big it is. I mean, you may think it's a long way down the road to the chemist, but that's just peanuts to space.
+# Find the shortest line in any file under the current directory:
+#
+#   $ len -1s .
+#   0: 
 #
 # NOTE
 #
@@ -28,6 +30,7 @@
 # - Prefix output with file names
 
 from argparse import ArgumentParser
+from itertools import islice
 from os import walk
 from os.path import isdir, join
 from sys import stdin
@@ -63,13 +66,19 @@ def main():
         lines = sorted(lines, key=len, reverse=True)
     elif args.s:
         lines = sorted(lines, key=len)
+    if args.__dict__['1']:
+        lines = islice(lines, 1)
     print_lines(lines)
 
 
 def parse_args():
     parser = ArgumentParser(
             description='Print line lengths.',
-            usage='%(prog)s [-h] [-rs] [FILE...]')
+            usage='%(prog)s [-h] [-1rs] [FILE...]')
+    parser.add_argument(
+            '-1',
+            action='store_true',
+            help='print only the first line of output')
     parser.add_argument(
             '-r',
             action='store_true',

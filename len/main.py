@@ -1,21 +1,38 @@
 #!/usr/bin/env python3
 #
-# Prints the lengths of all lines in a file.  For example:
+# Prints the lengths of all lines in a file.
 #
+# EXAMPLE
 #
-#   $ len -s $(fd -t f) |tail -1
+# Find the longest line in any of several files:
+#
+#   $ len -s *.py | tail -1
 #   78:     Returns a lazy generator of lines without trailing newline characters from
+#
+# Find the longest line in any file under the current directory:
+#
+#   len $ len -s . | tail -1
+#   169: You just won't believe how vastly hugely mind-bogglingly big it is. I mean, you may think it's a long way down the road to the chemist, but that's just peanuts to space.
+#
+# NOTE
 #
 # The length of a line is the number of codepoints, not bytes or grapheme
 # clusters.  For example, len('á') == 1, but len('á') == 2.
 #
 # TODO
-# - Traverse directories recursively
+#
 # - Recognize and exclude binary files
 # - Prefix output with file names
 
 from argparse import ArgumentParser
+from os import walk
+from os.path import isdir, join
 from sys import stdin
+
+def chomp_dir(dir):
+    for d, _, fs in walk(dir):
+        yield from chomp_files(join(d, f) for f in fs)
+
 
 def chomp_file(file):
     with open(file) as istream:
@@ -25,8 +42,7 @@ def chomp_file(file):
 
 def chomp_files(files):
     for file in files:
-        for line in chomp_file(file):
-            yield line
+        yield from chomp_dir(file) if isdir(file) else chomp_file(file)
 
 
 def chomp_lines(istream):

@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 #
-# Prints the lengths of all lines in a file.
+# Prints the lengths of all lines in a file.  For example:
 #
-# Tip: Pipe the output to sort -n to see the longest line.
+#
+#   $ len -s $(fd -t f) |tail -1
+#   78:     Returns a lazy generator of lines without trailing newline characters from
 #
 # The length of a line is the number of codepoints, not bytes or grapheme
 # clusters.  For example, len('á') == 1, but len('á') == 2.

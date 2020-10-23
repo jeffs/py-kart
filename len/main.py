@@ -7,17 +7,17 @@
 # Find the longest line in any of several files:
 #
 #   $ len -1r *.py
-#   78:     Returns a lazy generator of lines without trailing newline characters from
+#   78:    Returns a lazy generator of lines without trailing newline characters from
 #
 # Find the longest line in any file under the current directory:
 #
 #   $ len -1r .
-#   169: You just won't believe how vastly hugely mind-bogglingly big it is. I mean, you may think it's a long way down the road to the chemist, but that's just peanuts to space.
+#   169:You just won't believe how vastly hugely mind-bogglingly big it is. I mean, you may think it's a long way down the road to the chemist, but that's just peanuts to space.
 #
 # Find the shortest line in any file under the current directory:
 #
 #   $ len -1s .
-#   0: 
+#   0:
 #
 # NOTE
 #
@@ -97,7 +97,7 @@ def parse_args():
 
 def print_lines(lines):
     for line in lines:
-        print(len(line), line, sep=': ')
+        print(len(line), line, sep=':')
 
 
 if __name__ == '__main__':

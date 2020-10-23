@@ -14,8 +14,8 @@
 # - Recognize and exclude binary files
 # - Prefix output with file names
 
-import argparse
-import sys
+from argparse import ArgumentParser
+from sys import stdin
 
 def chomp_file(file):
     with open(file) as istream:
@@ -39,14 +39,14 @@ def chomp_lines(istream):
 
 def main():
     args = parse_args()
-    lines = chomp_files(args.files) if args.files else chomp_lines(sys.stdin)
+    lines = chomp_files(args.files) if args.files else chomp_lines(stdin)
     if args.s:
         lines = sorted(lines, key=len)
     print_lines(lines)
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(
+    parser = ArgumentParser(
             description='Print line lengths.',
             usage='%(prog)s [-h] [-s] [FILE...]')
     parser.add_argument(

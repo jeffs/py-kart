@@ -1,0 +1,4 @@
+- Optionally prefix output with file names.
+- Support tabstops.  Currently, a tabs is considered a single column.
+- Produce histograms of line length distributions.
+- Optionally exclude empty lines.

@@ -2,6 +2,14 @@
 #
 # Replaces ordinary quotation marks with smart quotes.
 #
+# ## Quality
+# TODO: Add formal test suite
+# TODO: Rewrite in Rust
+#
+# ### Bugs
+# TODO: Correctly support quote followed by punctuation (')' or '—')
+#
+# ## Features
 # TODO: Support -i flag to process files in-place.
 
 import re

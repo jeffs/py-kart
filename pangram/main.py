@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 
+import argparse
 import sys
 from typing import Set
 
@@ -13,29 +14,50 @@ DEFAULT_WORDS_FILE = "/usr/share/dict/words"
 class Command:
     mandatory_letter: str
     available_letters: Set[str]
+    min_length: int
     words_file: str
 
 
-def parse_args(args) -> Command:
-    if len(args) not in (1, 2):
-        print("Usage: pangram <letters> [words-file]", file=sys.stderr)
-        sys.exit(1)
-    letters = args[0]
+def parse_args() -> Command:
+    parser = argparse.ArgumentParser(description="Find Spelling Bee answers.")
+    parser.add_argument(
+        "-m",
+        "--min-length",
+        default=DEFAULT_MIN_LENGTH,
+        help="omit words shorter than N characters",
+        metavar="N",
+        type=int,
+    )
+    parser.add_argument(
+        "letters",
+        help="available letters, mandatory letter first",
+        type=str,
+    )
+    parser.add_argument(
+        "words_file",
+        default=DEFAULT_WORDS_FILE,
+        help="available words, one per line",
+        metavar="words-file",
+        nargs="?",
+        type=str,
+    )
+    args = parser.parse_args()
     return Command(
-        mandatory_letter=letters[0],
-        available_letters=set(letters),
-        words_file=args[1] if len(args) == 2 else DEFAULT_WORDS_FILE,
+        mandatory_letter=args.letters[0],
+        available_letters=set(args.letters),
+        min_length=args.min_length,
+        words_file=args.words_file,
     )
 
 
-def make_validator(mandatory_letter, available_letters):
+def make_validator(command):
     def is_valid_char(c) -> bool:
-        return c in available_letters or not c.isalpha()
+        return c in command.available_letters or not c.isalpha()
 
     def is_valid_word(word) -> bool:
         return (
-            len(word) >= DEFAULT_MIN_LENGTH
-            and mandatory_letter in word
+            len(word) >= command.min_length
+            and command.mandatory_letter in word
             and all(map(is_valid_char, word))
         )
 
@@ -43,21 +65,16 @@ def make_validator(mandatory_letter, available_letters):
 
 
 def main():
-    command = parse_args(sys.argv[1:])
+    command = parse_args()
     with open(command.words_file) as lines:
         words = tuple(line.strip() for line in lines)
 
-    is_valid_word = make_validator(
-        command.mandatory_letter, command.available_letters
-    )
-
+    is_valid_word = make_validator(command)
     valid_words = sorted(filter(is_valid_word, words), key=len)
-
     for word in valid_words:
-        if all(c in word for c in command.available_letters):
-            print(' *', word)
-        else:
-            print('  ', word)
+        is_pangram = all(c in word for c in command.available_letters)
+        prefix = " *" if is_pangram else "  "
+        print(prefix, word)
 
 
 if __name__ == "__main__":

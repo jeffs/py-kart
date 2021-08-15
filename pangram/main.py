@@ -12,7 +12,7 @@ DEFAULT_WORDS_FILE = "/usr/share/dict/words"
 
 @dataclass
 class Command:
-    mandatory_letter: str
+    mandatory_letters: Set[str]
     available_letters: Set[str]
     min_length: int
     words_file: str
@@ -30,7 +30,7 @@ def parse_args() -> Command:
     )
     parser.add_argument(
         "letters",
-        help="available letters, mandatory letter first",
+        help="available letters, capitalized if manadatory",
         type=str,
     )
     parser.add_argument(
@@ -43,8 +43,8 @@ def parse_args() -> Command:
     )
     args = parser.parse_args()
     return Command(
-        mandatory_letter=args.letters[0],
-        available_letters=set(args.letters),
+        mandatory_letters=set(c.lower() for c in args.letters if c.isupper()),
+        available_letters=set(args.letters.lower()),
         min_length=args.min_length,
         words_file=args.words_file,
     )
@@ -57,7 +57,7 @@ def make_validator(command: Command) -> Callable[[str], bool]:
     def is_valid_word(word: str) -> bool:
         return (
             len(word) >= command.min_length
-            and command.mandatory_letter in word
+            and all(c in word for c in command.mandatory_letters)
             and all(map(is_valid_char, word))
         )
 

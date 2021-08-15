@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 import argparse
 import sys
-from typing import Set
+from typing import Callable, Set
 
 DEFAULT_MIN_LENGTH = 4
 DEFAULT_WORDS_FILE = "/usr/share/dict/words"
@@ -50,11 +50,11 @@ def parse_args() -> Command:
     )
 
 
-def make_validator(command):
-    def is_valid_char(c) -> bool:
+def make_validator(command: Command) -> Callable[[str], bool]:
+    def is_valid_char(c: str) -> bool:
         return c in command.available_letters or not c.isalpha()
 
-    def is_valid_word(word) -> bool:
+    def is_valid_word(word: str) -> bool:
         return (
             len(word) >= command.min_length
             and command.mandatory_letter in word
@@ -64,7 +64,7 @@ def make_validator(command):
     return is_valid_word
 
 
-def main():
+def main() -> None:
     command = parse_args()
     with open(command.words_file) as lines:
         words = tuple(line.strip() for line in lines)

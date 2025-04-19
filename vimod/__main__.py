@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 
 """
+DEPRECATED: Use rust-kart/vimod instead. Aside from the advantages of being
+compiled (and thus not being reliant on a Python interpreter from PATH), the
+Rust version (unlike this Python version) supports files whose names contain
+whitespace.
+
 Opens any modified files from the current Git working copy in ${EDITOR:-vi}.
 """
 
